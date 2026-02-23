@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<title>{{ title or 'Результаты' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>{{ title or 'Результаты' }}</h2>
+
+    {# Фильтры с РУССКИМИ метками #}
+    {% if filters_display %}
+      <p style="opacity:.8;margin:.25rem 0 1rem">
+        Фильтры:
+        {% for label, val in filters_display %}
+          <b>{{ label }}</b>=<code>{{ (val if val is not none and val != '' else '—') }}</code>{% if not loop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+    {% endif %}
+
+    {% if rows and rows|length %}
+      {% set headers = headers or rows[0].keys() %}
+      <p style="margin:.25rem 0 .5rem">Найдено записей: <b>{{ rows|length }}</b></p>
+      <table>
+        <thead>
+          <tr>
+            {% for h in headers %}
+              <th>{{ h }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              {% for h in headers %}
+                <td>{{ r[h] if r[h] is not none else '—' }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Данных не найдено под заданные параметры.</p>
+    {% endif %}
+
+    <div class="row" style="margin-top:12px">
+      <a class="btn" href="{{ url_for('queries.query_form_root', qid=qid) }}">Назад</a>
+      <a class="btn" href="{{ url_for('menu') }}">В главное меню</a>
+      <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

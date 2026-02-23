@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<title>{{ meta.title or 'Результаты отчёта' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>{{ meta.title or 'Результаты отчёта' }}</h2>
+
+    {# --- русские колонки по типу отчёта --- #}
+    {% set rid = report_id %}
+
+    {% if rid == 'interviews_monthly' %}
+      {# Собеседования по рекрутерам за месяц #}
+      {% set cols = [
+        ('rep_id',         'ID'),
+        ('rep_year',       'Год'),
+        ('rep_month',      'Месяц'),
+        ('office_id',      'Офис'),
+        ('vacancy_id',     'Вакансия'),
+        ('recruiter_id',   'Рекрутер'),
+        ('interviews_cnt', 'Собеседований'),
+        ('created_at',     'Создано')
+      ] %}
+    {% elif rid == 'monthly_proc_recruiting' %}
+      {# Месячный отчёт по найму #}
+      {% set cols = [
+        ('rep_id',        'ID'),
+        ('rep_year',      'Год'),
+        ('rep_month',     'Месяц'),
+        ('office_id',     'Офис'),
+        ('total_hires',   'Принято'),
+        ('avg_open_days', 'Сред. дни открытия'),
+        ('created_at',    'Создано')
+      ] %}
+    {% else %}
+      {# Fallback: по ключам первой строки #}
+      {% if rows and rows|length %}
+        {% set cols = [] %}
+        {% for k in rows[0].keys() %}
+          {% set _ = cols.append((k, k)) %}
+        {% endfor %}
+      {% else %}
+        {% set cols = [] %}
+      {% endif %}
+    {% endif %}
+
+    {% if rows and rows|length %}
+      <table>
+        <thead>
+          <tr>
+            {% for key, label in cols %}
+              <th>{{ label }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              {% for key, label in cols %}
+                <td>
+                  {% if key == 'avg_open_days' and r.get(key) is not none %}
+                    {{ ('%.2f' % r.get(key)) }}
+                  {% elif r.get(key) is not none %}
+                    {{ r.get(key) }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Нет данных по заданным параметрам.</p>
+    {% endif %}
+
+    <div class="row" style="margin-top:12px; gap:8px;">
+      <a class="btn" href="{{ url_for('reports.report_form_root', rid=report_id) }}">Назад к параметрам</a>
+      <a class="btn" href="{{ url_for('reports.report_form_root') }}">К списку отчётов</a>
+      <a class="btn" href="{{ url_for('menu') }}">В главное меню</a>
+      <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

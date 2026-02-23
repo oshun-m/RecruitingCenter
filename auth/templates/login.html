@@ -1,0 +1,29 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<title>Вход</title>
+<style>
+  :root{--bg:#f7fafc;--card:#ffffff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#16a34a;--danger:#ef4444}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto}
+  .wrap{max-width:720px;margin:40px auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  input{background:#fff;border:1px solid var(--line);border-radius:10px;color:var(--text);padding:10px 12px}
+  .btn{padding:10px 14px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+  .flash{padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;margin:6px 0}
+  .error{border-color:var(--danger);color:#991b1b}
+</style>
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>Вход</h2>
+    <form method="post">
+      <div class="row">
+        <input name="login" placeholder="Логин" required>
+        <input name="pass" type="password" placeholder="Пароль" required>
+        <button class="btn" type="submit">Войти</button>
+      </div>
+      {% if error %}<div class="flash error">{{ error }}</div>{% endif %}
+    </form>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,11 @@
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    <div style="margin:12px 0">
+      {% for category, message in messages %}
+        <div style="padding:10px;border:1px solid #334155;border-radius:8px;margin:6px 0">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

@@ -1,0 +1,31 @@
+<h3>Корзина: вакансия {{ vac_id }}, дата {{ date }}, сотрудник {{ emp_id }}</h3>
+
+{% if not items %}
+  <p>Пусто.</p>
+{% else %}
+  <table>
+    <tr><th>ФИО</th><th>Возраст</th><th>Пол</th><th></th></tr>
+    {% for cid, snap in items.items() %}
+    <tr>
+      <td>{{ snap.full_name }}</td>
+      <td>{{ snap.age }}</td>
+      <td>{{ snap.gender }}</td>
+      <td>
+        <form method="post" action="{{ url_for('interviews.basket') }}">
+          <input type="hidden" name="vac_id" value="{{ vac_id }}">
+          <input type="hidden" name="date"   value="{{ date }}">
+          <input type="hidden" name="emp_id" value="{{ emp_id }}">
+          <button name="remove" value="{{ cid }}">Убрать</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <form method="post" action="{{ url_for('interviews.commit') }}" style="margin-top:12px">
+    <input type="hidden" name="vac_id" value="{{ vac_id }}">
+    <input type="hidden" name="date"   value="{{ date }}">
+    <input type="hidden" name="emp_id" value="{{ emp_id }}">
+    <button type="submit">Подтвердить приглашения</button>
+  </form>
+{% endif %}

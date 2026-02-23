@@ -1,0 +1,13 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<title>Создано</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<body>
+<div class="wrap">{% include "_flash.html" %}
+  <div class="card">
+    <h2>Готово</h2>
+    <p>Событие интервью #{{ event_id }} на дату {{ date }} создано/обновлено.</p>
+    <p>Добавлено приглашений: <b>{{ created }}</b>.</p>
+    <p><a href="{{ url_for('interviews.menu') }}">Назначить ещё</a></p>
+  </div>
+</div>
+</body>

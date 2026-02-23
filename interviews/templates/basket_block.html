@@ -1,0 +1,22 @@
+{% if basket.items %}
+{% for cid, item in basket['items'].items() %}
+    <div style="border-bottom:1px solid #ddd; padding:4px 0;">
+        <strong>{{ item.full_name }}</strong><br>
+        Возраст: {{ item.age }}<br>
+        Пол: {{ item.gender }}
+        <br>
+        <button onclick="removeCandidate({{ basket.vac_id }}, '{{ basket.date }}', {{ basket.emp_id or 'null' }}, {{ item.cand_id }})">
+            Удалить
+        </button>
+    </div>
+{% endfor %}
+
+    <form method="post" action="{{ url_for('interviews.confirm') }}" style="margin-top:10px;">
+        <input type="hidden" name="vac_id" value="{{ basket.vac_id }}">
+        <input type="hidden" name="date" value="{{ basket.date }}">
+        <input type="hidden" name="emp_id" value="{{ basket.emp_id }}">
+        <button type="submit" style="width:100%; padding:6px;">Подтвердить запись</button>
+    </form>
+{% else %}
+    <p>Пока никого не выбрали.</p>
+{% endif %}

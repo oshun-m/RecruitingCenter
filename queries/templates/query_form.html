@@ -1,0 +1,58 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<title>{{ title or 'Параметризованный запрос' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>{{ title or 'Параметризованный запрос' }}</h2>
+
+    <!-- выбрать запрос -->
+    <form method="get" action="{{ url_for('queries.query_form_root') }}">
+      <div class="row" style="gap:8px;align-items:center">
+        <label>Выберите запрос:</label>
+        <select name="qid" onchange="this.form.submit()">
+          <option value="">—</option>
+          {% for key, meta in queries.items() %}
+            <option value="{{ key }}" {% if qid==key %}selected{% endif %}>
+              {{ meta.title }}
+            </option>
+          {% endfor %}
+        </select>
+        <noscript><button class="btn">ОК</button></noscript>
+      </div>
+    </form>
+
+    <!-- Шаг 2: если выбран запрос — показать параметры -->
+    {% if qid and fields %}
+      <form method="post" action="{{ url_for('queries.query_run') }}">
+        <input type="hidden" name="qid" value="{{ qid }}">
+        <div class="row" style="flex-direction:column;gap:12px;max-width:420px;margin-top:12px">
+          {% for f in fields %}
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span>{{ f.label }}{% if f.required %} *{% endif %}</span>
+              {% if f.type == 'date' %}
+                <input type="date" name="{{ f.name }}" value="{{ params.get(f.name,'') }}" {% if f.required %}required{% endif %}>
+              {% elif f.type in ('int','number') %}
+                <input type="number" name="{{ f.name }}" value="{{ params.get(f.name,'') }}" {% if f.required %}required{% endif %}>
+              {% else %}
+                <input type="text" name="{{ f.name }}" value="{{ params.get(f.name,'') }}" {% if f.required %}required{% endif %}>
+              {% endif %}
+            </label>
+          {% endfor %}
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn btn-primary" type="submit">Показать результат</button>
+          <a class="btn" href="{{ url_for('menu') }}">В главное меню</a>
+          <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+        </div>
+      </form>
+    {% else %}
+      <div class="row" style="margin-top:12px">
+        <a class="btn" href="{{ url_for('menu') }}">В главное меню</a>
+        <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+</body></html>

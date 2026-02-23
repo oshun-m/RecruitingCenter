@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<title>{{ title or 'История отчётов' }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>{{ title or 'История отчётов' }}</h2>
+
+    {% if rows and rows|length %}
+      {% set headers = headers or rows[0].keys() %}
+      <table>
+        <thead>
+          <tr>
+            {% for h in headers %}<th>{{ h }}</th>{% endfor %}
+            <th>Действие</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+            <tr>
+              {% for h in headers %}<td>{{ r[h] if r[h] is not none else '—' }}</td>{% endfor %}
+              <td><a class="btn" href="{{ url_for('reports.report_view', log_id=r['log_id']) }}">Открыть</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>История пуста.</p>
+    {% endif %}
+
+    <div class="row" style="margin-top:12px">
+      <a class="btn" href="{{ url_for('reports.report_form_root') }}">К отчётам</a>
+      <a class="btn" href="{{ url_for('menu') }}">В главное меню</a>
+      <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

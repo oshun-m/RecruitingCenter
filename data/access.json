@@ -1,0 +1,5 @@
+{
+  "admin":   ["auth", "queries", "reports", "interviews", "reports_build"],
+  "manager": ["auth", "queries", "reports"],
+  "hr":      ["auth", "interviews"]
+}

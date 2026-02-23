@@ -1,0 +1,28 @@
+<!doctype html><html lang="ru"><meta charset="utf-8">
+<title>Главное меню</title>
+<style>
+  :root{--bg:#f7fafc;--card:#ffffff;--text:#111827;--line:#e5e7eb;--accent:#16a34a;--danger:#ef4444}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto}
+  .wrap{max-width:720px;margin:40px auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .btn{padding:10px 14px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;color:var(--text);text-decoration:none}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+</style>
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>Главное меню</h2>
+    <p>Вы вошли как: <b>{{ user.role }}</b></p>
+    <div class="row">
+      <a class="btn btn-primary" href="{{ url_for('queries.query_form_root') }}">Параметризованный запрос</a>
+      <a class="btn btn-primary" href="{{ url_for('interviews.menu') }}">Расписание собеседований</a>
+      <a class="btn btn-primary" href="{{ url_for('reports.report_form_root') }}">Работа с отчётами</a>
+      <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+    </div>
+
+  </div>
+</div>
+</body></html>

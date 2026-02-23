@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>{{ meta.title if meta else 'Работа с отчётами' }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+<div class="wrap">
+  {% include "_flash.html" %}
+  <div class="card">
+    <h2>{{ meta.title if meta else 'Работа с отчётами' }}</h2>
+
+    <div class="row" style="gap:16px; align-items:flex-start;">
+      <!-- Список отчётов слева -->
+      <div style="min-width:260px;">
+        <h4 style="margin:.25rem 0 .5rem">Доступные отчёты</h4>
+        <ul>
+          {% for id, m in reports.items() %}
+            <li>
+              <a class="btn {% if rid == id %}btn-primary{% endif %}"
+                 href="{{ url_for('reports.report_form_root', rid=id) }}">
+                {{ m.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Форма параметров справа -->
+      <div style="flex:1;">
+        {% if meta %}
+          <form method="post" action="{{ url_for('reports.report_run') }}">
+            <input type="hidden" name="report_id" value="{{ rid }}">
+
+            <div class="grid">
+              {% for f in meta.fields %}
+                <label style="display:block; margin-bottom:8px">
+                  <div style="font-weight:600">{{ f.label }}</div>
+
+                  {% set val = params.get(f.name, '') %}
+                  {% if f.type == 'date' %}
+                    <input type="date" name="{{ f.name }}" value="{{ val }}">
+                  {% elif f.type in ['int', 'number'] %}
+                    {# Доп. ограничения для месяца #}
+                    {% if f.name == 'p_month' %}
+                      <input type="number" name="p_month" min="1" max="12"
+                             step="1" value="{{ val }}">
+                    {% else %}
+                      <input type="number" name="{{ f.name }}" step="1" value="{{ val }}">
+                    {% endif %}
+                  {% else %}
+                    <input type="text" name="{{ f.name }}" value="{{ val }}">
+                  {% endif %}
+                </label>
+              {% endfor %}
+            </div>
+
+            <div class="row" style="margin-top:12px; gap:8px;">
+              <button class="btn btn-primary" type="submit" name="action" value="create">
+                Создать отчёт
+              </button>
+              <button class="btn" type="submit" name="action" value="view">
+                Смотреть готовые
+              </button>
+              <a class="btn" href="{{ url_for('menu') }}">В главное меню</a>
+              <a class="btn btn-danger" href="{{ url_for('auth.logout') }}">Выйти</a>
+            </div>
+          </form>
+        {% else %}
+          <p>Выберите отчёт слева, затем укажите месяц, год и (при необходимости) номер офиса.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

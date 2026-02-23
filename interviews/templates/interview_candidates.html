@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Планирование собеседований</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .layout { display: flex; gap: 20px; align-items: flex-start; }
+        .candidates { flex: 2; }
+        .basket { flex: 1; background: #f7f7f7; padding: 10px; border: 1px solid #ccc; }
+        .candidate-card {
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        button { cursor: pointer; padding: 4px 8px; }
+    </style>
+    <script>
+        async function addCandidate(vac_id, date, emp_id, cand_id) {
+            const res = await fetch("{{ url_for('interviews.add_ajax') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({vac_id, date, emp_id, cand_id})
+            });
+            const html = await res.text();
+            document.getElementById("basket-container").innerHTML = html;
+        }
+
+        async function removeCandidate(vac_id, date, emp_id, cand_id) {
+            const res = await fetch("{{ url_for('interviews.remove_ajax') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({vac_id, date, emp_id, cand_id})
+            });
+            const html = await res.text();
+            document.getElementById("basket-container").innerHTML = html;
+        }
+    </script>
+</head>
+<body>
+    <h2>Вакансия {{ vac_id }}, дата {{ date }}</h2>
+
+    <div class="layout">
+        <div class="candidates">
+            {# локально достаём словарь выбранных кандидатов из корзины #}
+            {% set selected = (basket['items'] if basket and 'items' in basket else {}) %}
+
+            {% for cand in candidates %}
+                <div class="candidate-card">
+                    <div>
+                        <strong>{{ cand.full_name }}</strong><br>
+                        Возраст: {{ cand.age }}<br>
+                        Пол: {{ cand.gender }}
+                    </div>
+
+                    {% if cand.cand_id|string in selected %}
+                        <button onclick="removeCandidate({{ vac_id }}, '{{ date }}', {{ emp_id or 'null' }}, {{ cand.cand_id }})">
+                            Удалить
+                        </button>
+                    {% else %}
+                        <button onclick="addCandidate({{ vac_id }}, '{{ date }}', {{ emp_id or 'null' }}, {{ cand.cand_id }})">
+                            Добавить
+                        </button>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="basket">
+            <h3>Запись на {{ date }}</h3>
+            <div id="basket-container">
+                {% include 'basket_block.html' %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
